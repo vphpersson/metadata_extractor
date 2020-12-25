@@ -42,7 +42,7 @@ class _OfficeOpenXMLParser(HTMLParser):
 
 
 @register_metadata_extractor
-class MSXMLMetadataExtractor(MetadataExtractor):
+class OfficeOpenXMLMetadataExtractor(MetadataExtractor):
 
     MIME_TYPES = {
         'application/vnd.ms-excel.addin.macroEnabled.12',
