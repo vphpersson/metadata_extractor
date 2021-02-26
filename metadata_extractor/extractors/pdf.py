@@ -1,8 +1,9 @@
 from pathlib import Path
-from typing import Dict
+from typing import Union
 
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
+from pdfminer.pdftypes import PDFObject, resolve1
 
 from metadata_extractor.extractors import MetadataExtractor, register_metadata_extractor
 
@@ -11,8 +12,11 @@ from metadata_extractor.extractors import MetadataExtractor, register_metadata_e
 class PDFMetadataExtractor(MetadataExtractor):
     MIME_TYPES = {'application/pdf'}
 
-    # TODO: Add proper type hints.
     @staticmethod
-    def from_path(path: Path) -> Dict[str, bytes]:
+    def from_path(path: Path) -> dict[str, bytes]:
         with path.open('rb') as fp:
-            return next(iter(PDFDocument(PDFParser(fp)).info), dict())
+            info: dict[str, Union[PDFObject, bytes]] = next(iter(PDFDocument(PDFParser(fp)).info), dict())
+            return {
+                key: resolve1(value) if isinstance(value, PDFObject) else value
+                for key, value in info.items()
+            }
